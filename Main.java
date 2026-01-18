@@ -1,218 +1,84 @@
 import java.util.ArrayList;
 
 /**
- * Abstract parent class for all media types.
- * Contains shared fields, constructor, and methods.
- */
-abstract class Media {
-
-    /** Title of the media */
-    protected String title;
-
-    /** Duration of the media in seconds */
-    protected int durationInSeconds;
-
-    /**
-     * Constructs a Media object.
-     *
-     * @param title             the media title
-     * @param durationInSeconds the media duration in seconds
-     */
-    public Media(String title, int durationInSeconds) {
-        this.title = title;
-        this.durationInSeconds = durationInSeconds;
-    }
-
-    /**
-     * Gets the media title.
-     *
-     * @return title of the media
-     */
-    public String getTitle() {
-        return title;
-    }
-
-    /**
-     * Gets the duration of the media.
-     *
-     * @return duration in seconds
-     */
-    public int getDurationInSeconds() {
-        return durationInSeconds;
-    }
-
-    /**
-     * Returns a string representation of a Media object.
-     * This method is inherited by all subclasses.
-     *
-     * @return formatted media information
-     */
-    @Override
-    public String toString() {
-        return "Title: " + title + ", Duration: " + durationInSeconds + " seconds";
-    }
-
-    /**
-     * Abstract method that all subclasses must implement.
-     */
-    public abstract void play();
-}
-
-/**
- * Represents a Song.
- * Demonstrates single inheritance from Media.
- */
-class Song extends Media {
-
-    /** Artist who performs the song */
-    private String artist;
-
-    /**
-     * Constructs a Song object.
-     *
-     * @param title             song title
-     * @param durationInSeconds song duration
-     * @param artist            song artist
-     */
-    public Song(String title, int durationInSeconds, String artist) {
-        super(title, durationInSeconds);
-        this.artist = artist;
-    }
-
-    /**
-     * Plays the song.
-     */
-    @Override
-    public void play() {
-        System.out.println("Playing song: " + title + " by " + artist);
-    }
-
-    /**
-     * Extends the Media toString() method.
-     *
-     * @return formatted song information
-     */
-    @Override
-    public String toString() {
-        return super.toString() + ", Artist: " + artist;
-    }
-}
-
-/**
- * Represents a Podcast.
- * Demonstrates inheritance from Media.
- */
-class Podcast extends Media {
-
-    /** Host of the podcast */
-    protected String host;
-
-    /**
-     * Constructs a Podcast object.
-     *
-     * @param title             podcast title
-     * @param durationInSeconds podcast duration
-     * @param host              podcast host
-     */
-    public Podcast(String title, int durationInSeconds, String host) {
-        super(title, durationInSeconds);
-        this.host = host;
-    }
-
-    /**
-     * Plays the podcast.
-     */
-    @Override
-    public void play() {
-        System.out.println("Playing podcast: " + title + " hosted by " + host);
-    }
-
-    /**
-     * Extends the Media toString() method.
-     *
-     * @return formatted podcast information
-     */
-    @Override
-    public String toString() {
-        return super.toString() + ", Host: " + host;
-    }
-}
-
-/**
- * Represents a specific episode of a Podcast.
- * Demonstrates multilevel inheritance.
- */
-class PodcastEpisode extends Podcast {
-
-    /** Episode number */
-    private int episodeNumber;
-
-    /**
-     * Constructs a PodcastEpisode object.
-     *
-     * @param title             episode title
-     * @param durationInSeconds episode duration
-     * @param host              podcast host
-     * @param episodeNumber     episode number
-     */
-    public PodcastEpisode(String title, int durationInSeconds, String host, int episodeNumber) {
-        super(title, durationInSeconds, host);
-        this.episodeNumber = episodeNumber;
-    }
-
-    /**
-     * Plays the podcast episode.
-     */
-    @Override
-    public void play() {
-        System.out.println(
-                "Playing podcast episode " + episodeNumber +
-                        ": " + title + " hosted by " + host);
-    }
-
-    /**
-     * Extends the Podcast toString() method.
-     *
-     * @return formatted podcast episode information
-     */
-    @Override
-    public String toString() {
-        return super.toString() + ", Episode: " + episodeNumber;
-    }
-}
-
-/**
- * Main class demonstrating inheritance, polymorphism,
- * ArrayList usage, and method overriding.
+ * Main class demonstrating abstraction, inheritance, and polymorphism in
+ * MyPlaylist.
+ * Shows how Media references can point to multiple subclasses (Song, Podcast,
+ * PodcastEpisode)
+ * and how dynamic method dispatch works.
  */
 public class Main {
 
     /**
-     * Program entry point.
+     * Entry point of the program.
+     * Demonstrates polymorphic references, a polymorphic collection, loops, and
+     * parent-type methods.
      *
-     * @param args command-line arguments
+     * @param args Command-line arguments (not used)
      */
     public static void main(String[] args) {
 
-        System.out.println("🎵 MyPlaylist Demo with Inheritance & Polymorphism\n");
+        System.out.println("MyPlaylist Polymorphism Demo with ArrayList\n");
 
-        // Create a playlist using ArrayList (polymorphism in action)
+        // ============================
+        // Step 1: Polymorphic References
+        // ============================
+
+        Media song = new Song("Amber", 260, "311"); // Updated song
+        Media podcast = new Podcast("History Hour", 3000, "Prof. Luna");
+        Media episode = new PodcastEpisode("AI Trends", 600, "Tech Talk", 12);
+
+        // Dynamic method dispatch demonstration
+        song.play(); // Calls Song's play() method
+        podcast.play(); // Calls Podcast's play() method
+        episode.play(); // Calls PodcastEpisode's play() method
+
+        // ============================
+        // Step 2: Polymorphic Collection
+        // ============================
+
         ArrayList<Media> playlist = new ArrayList<>();
+        playlist.add(song);
+        playlist.add(podcast);
+        playlist.add(episode);
 
-        playlist.add(new Song("Mr. Brightside", 223, "The Killers"));
-        playlist.add(new Podcast("Tech Talks Daily", 1800, "Neil Hughes"));
-        playlist.add(new PodcastEpisode("The Future of AI", 2700, "Neil Hughes", 42));
+        // ============================
+        // Step 3: Loop Through Collection
+        // ============================
 
-        // Play all media items
-        for (Media media : playlist) {
-            media.play();
+        System.out.println("\nPlaying playlist using polymorphic ArrayList loop:");
+        for (Media item : playlist) {
+            item.play(); // Calls the correct overridden play() method dynamically
         }
 
-        System.out.println("\n📄 Playlist Details:");
+        // ============================
+        // Step 4: Parent-Type Helper Method
+        // ============================
 
-        // Demonstrate overridden toString() methods
-        for (Media media : playlist) {
-            System.out.println(media);
+        System.out.println("\nDisplaying media information:");
+        for (Media item : playlist) {
+            printMediaInfo(item); // Works for any Media subclass
         }
+
+        // ============================
+        // Step 5: Reflection on Polymorphism
+        // ============================
+
+        // Observations:
+        // 1. Each object successfully ran its overridden play() method 
+        // 2. No instanceof or type-checking was required 
+        // 3. Loop handled all media types without modification 
+        // 4. Adding new media types would not require changing loops or helper methods
+        // 
+        // 5. Demonstrates scalable and maintainable OOP design using polymorphism
+    }
+
+    /**
+     * Helper method to print general information about any Media object.
+     *
+     * @param item Media object (Song, Podcast, PodcastEpisode, etc.)
+     */
+    public static void printMediaInfo(Media item) {
+        System.out.println(item.getTitle() + " (" + item.getDurationInSeconds() + " seconds)");
     }
 }
