@@ -1,78 +1,218 @@
-abstract class Media {
-    // Our shared info - every media needs these
-    private String title;
-    private int durationInSeconds;
+import java.util.ArrayList;
 
-    // Constructor - sets up the shared stuff
+/**
+ * Abstract parent class for all media types.
+ * Contains shared fields, constructor, and methods.
+ */
+abstract class Media {
+
+    /** Title of the media */
+    protected String title;
+
+    /** Duration of the media in seconds */
+    protected int durationInSeconds;
+
+    /**
+     * Constructs a Media object.
+     *
+     * @param title             the media title
+     * @param durationInSeconds the media duration in seconds
+     */
     public Media(String title, int durationInSeconds) {
         this.title = title;
         this.durationInSeconds = durationInSeconds;
     }
 
-    // Getters - way to see the private info safely
+    /**
+     * Gets the media title.
+     *
+     * @return title of the media
+     */
     public String getTitle() {
         return title;
     }
 
-    public int getDuration() {
+    /**
+     * Gets the duration of the media.
+     *
+     * @return duration in seconds
+     */
+    public int getDurationInSeconds() {
         return durationInSeconds;
     }
 
-    // ABSTRACT = "subclasses MUST write this method"
+    /**
+     * Returns a string representation of a Media object.
+     * This method is inherited by all subclasses.
+     *
+     * @return formatted media information
+     */
+    @Override
+    public String toString() {
+        return "Title: " + title + ", Duration: " + durationInSeconds + " seconds";
+    }
+
+    /**
+     * Abstract method that all subclasses must implement.
+     */
     public abstract void play();
 }
 
-// =======================================
-// Song class - uses Media's stuff + adds song extras
-// =======================================
+/**
+ * Represents a Song.
+ * Demonstrates single inheritance from Media.
+ */
 class Song extends Media {
-    private String artist;  // Song-only info
 
-    // Constructor - super() calls parent's constructor first!
+    /** Artist who performs the song */
+    private String artist;
+
+    /**
+     * Constructs a Song object.
+     *
+     * @param title             song title
+     * @param durationInSeconds song duration
+     * @param artist            song artist
+     */
     public Song(String title, int durationInSeconds, String artist) {
-        super(title, durationInSeconds);  // Parent setup first
+        super(title, durationInSeconds);
         this.artist = artist;
     }
 
-    // Our version of play() - what makes Song special
+    /**
+     * Plays the song.
+     */
     @Override
     public void play() {
-        System.out.println("♪ " + getTitle() + " by " + artist);
+        System.out.println("Playing song: " + title + " by " + artist);
+    }
+
+    /**
+     * Extends the Media toString() method.
+     *
+     * @return formatted song information
+     */
+    @Override
+    public String toString() {
+        return super.toString() + ", Artist: " + artist;
     }
 }
 
-// =======================================
-// MAIN - Let's see it work!
-// =======================================
+/**
+ * Represents a Podcast.
+ * Demonstrates inheritance from Media.
+ */
+class Podcast extends Media {
+
+    /** Host of the podcast */
+    protected String host;
+
+    /**
+     * Constructs a Podcast object.
+     *
+     * @param title             podcast title
+     * @param durationInSeconds podcast duration
+     * @param host              podcast host
+     */
+    public Podcast(String title, int durationInSeconds, String host) {
+        super(title, durationInSeconds);
+        this.host = host;
+    }
+
+    /**
+     * Plays the podcast.
+     */
+    @Override
+    public void play() {
+        System.out.println("Playing podcast: " + title + " hosted by " + host);
+    }
+
+    /**
+     * Extends the Media toString() method.
+     *
+     * @return formatted podcast information
+     */
+    @Override
+    public String toString() {
+        return super.toString() + ", Host: " + host;
+    }
+}
+
+/**
+ * Represents a specific episode of a Podcast.
+ * Demonstrates multilevel inheritance.
+ */
+class PodcastEpisode extends Podcast {
+
+    /** Episode number */
+    private int episodeNumber;
+
+    /**
+     * Constructs a PodcastEpisode object.
+     *
+     * @param title             episode title
+     * @param durationInSeconds episode duration
+     * @param host              podcast host
+     * @param episodeNumber     episode number
+     */
+    public PodcastEpisode(String title, int durationInSeconds, String host, int episodeNumber) {
+        super(title, durationInSeconds, host);
+        this.episodeNumber = episodeNumber;
+    }
+
+    /**
+     * Plays the podcast episode.
+     */
+    @Override
+    public void play() {
+        System.out.println(
+                "Playing podcast episode " + episodeNumber +
+                        ": " + title + " hosted by " + host);
+    }
+
+    /**
+     * Extends the Podcast toString() method.
+     *
+     * @return formatted podcast episode information
+     */
+    @Override
+    public String toString() {
+        return super.toString() + ", Episode: " + episodeNumber;
+    }
+}
+
+/**
+ * Main class demonstrating inheritance, polymorphism,
+ * ArrayList usage, and method overriding.
+ */
 public class Main {
+
+    /**
+     * Program entry point.
+     *
+     * @param args command-line arguments
+     */
     public static void main(String[] args) {
-        System.out.println("Alt Rock Hits Demo\n");
 
-        // Same Media type, different songs (polymorphism!)
-        Media song1 = new Song("Mr. Brightside", 223, "The Killers");
-        Media song2 = new Song("Chasing Cars", 264, "Snow Patrol");
-        Media song3 = new Song("Creep", 239, "Radiohead");
-        Media song4 = new Song("Amber", 265, "311");
-        Media song5 = new Song("1979", 260, "Smashing Pumpkins");
-        Media song6 = new Song("Butterfly", 265, "Crazy Town");
+        System.out.println("🎵 MyPlaylist Demo with Inheritance & Polymorphism\n");
 
-        // All songs have title + duration (from Media)
-        System.out.println("Songs loaded:");
-        System.out.println("1. " + song1.getTitle());
-        System.out.println("2. " + song2.getTitle());
-        System.out.println("3. " + song3.getTitle());
-        System.out.println("4. " + song4.getTitle());
-        System.out.println("5. " + song5.getTitle());
-        System.out.println("6. " + song6.getTitle());
-        System.out.println();
+        // Create a playlist using ArrayList (polymorphism in action)
+        ArrayList<Media> playlist = new ArrayList<>();
 
-        // Same play() call → different results!
-        System.out.println("🎵 Playing songs: 🎵");
-        song1.play();
-        song2.play();
-        song3.play();
-        song4.play();
-        song5.play();
-        song6.play();
+        playlist.add(new Song("Mr. Brightside", 223, "The Killers"));
+        playlist.add(new Podcast("Tech Talks Daily", 1800, "Neil Hughes"));
+        playlist.add(new PodcastEpisode("The Future of AI", 2700, "Neil Hughes", 42));
+
+        // Play all media items
+        for (Media media : playlist) {
+            media.play();
+        }
+
+        System.out.println("\n📄 Playlist Details:");
+
+        // Demonstrate overridden toString() methods
+        for (Media media : playlist) {
+            System.out.println(media);
+        }
     }
 }
